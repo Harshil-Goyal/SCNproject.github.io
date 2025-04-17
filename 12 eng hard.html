@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Class 12 Physics Quiz</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    /* General Styling */
+    body {
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #4facfe, #00f2fe);
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 3rem;
+      margin-top: 20px;
+      text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+    }
+
+    .quiz-container {
+      width: 90%;
+      max-width: 700px;
+      background: rgba(255, 255, 255, 0.2);
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+      backdrop-filter: blur(10px);
+      margin-top: 30px;
+    }
+
+    .question {
+      font-size: 1.5rem;
+      margin: 20px 0;
+      font-weight: 600;
+    }
+
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .options button {
+      background: #fff;
+      border: none;
+      padding: 12px 18px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 1.1rem;
+      font-weight: 500;
+      transition: background 0.3s, transform 0.3s, box-shadow 0.3s;
+    }
+
+    .options button:hover {
+      background: #8d7e84;
+      transform: scale(1.05);
+      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .timer {
+      font-size: 1.2rem;
+      margin: 10px 0;
+      text-align: center;
+      color: #ffdd57;
+    }
+
+    .next-btn {
+      padding: 12px 24px;
+      background: #ffdd57;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 1.1rem;
+      display: none;
+      text-align: center;
+      transition: background 0.3s, transform 0.3s;
+    }
+
+    .next-btn:hover {
+      background: #ffd700;
+      transform: scale(1.05);
+    }
+
+    /* Score Page */
+    .score-container {
+      text-align: center;
+      padding: 30px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 15px;
+      max-width: 800px;
+      margin-top: 20px;
+      backdrop-filter: blur(10px);
+    }
+
+    .score-details {
+      font-size: 1.2rem;
+      margin-top: 20px;
+    }
+
+    .answer-breakdown {
+      margin-top: 20px;
+      padding: 10px;
+      background-color: #1a1a1a;
+      border-radius: 10px;
+    }
+
+    .answer-breakdown p {
+      margin: 5px 0;
+    }
+
+    .correct {
+      color: #4CAF50;
+    }
+
+    .incorrect {
+      color: #f44336;
+    }
+
+    .score-container h2 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+    }
+
+    .score-details p {
+      font-weight: 500;
+    }
+  </style>
+</head>
+<body>
+  <h1>Class 12 Physics Quiz</h1>
+  <div class="quiz-container" id="quiz-container">
+    <div id="question-container"></div>
+    <div class="timer" id="timer">Time Left: 60s</div>
+    <button class="next-btn" id="next-btn">Next</button>
+  </div>
+
+  <!-- Score Page -->
+  <div id="score-page" class="score-container" style="display:none;">
+    <h2>Quiz Completed!</h2>
+    <div class="score-details" id="score-details">
+      <p>Your Total Score: <span id="final-score"></span></p>
+      <p>Correct Answers: <span id="correct-answers"></span></p>
+      <p>Incorrect Answers: <span id="incorrect-answers"></span></p>
+      <p>Percentage: <span id="percentage"></span>%</p>
+    </div>
+    <div class="answer-breakdown" id="answer-breakdown">
+      <h3>Answer Breakdown</h3>
+      <div id="answer-list"></div>
+    </div>
+    <button class="next-btn" onclick="restartQuiz()">Home</button>
+  </div>
+
+  <script>
+    const questions = [
+      { question: "A charged particle moves in a uniform magnetic field of 0.5 T perpendicular to its velocity. If the particle's speed is 2 m/s and its charge is 1 C, what is the radius of its circular path?", options: ["1 m", "2 m", "0.5 m", "4 m"], answer: 0 },
+      { question: "The energy required to break a bond is 1.5 × 10⁻¹⁹ J. What is the frequency of the photon required for this?", options: ["2.25 × 10¹⁴ Hz", "1.5 × 10¹⁴ Hz", "3 × 10¹⁴ Hz", "4.5 × 10¹⁴ Hz"], answer: 0 },
+      { question: "In a resonance circuit, the power factor is 0.6 and the resistance is 4 Ω. What is the reactance of the circuit?", options: ["6.67 Ω", "5.4 Ω", "3.3 Ω", "8.4 Ω"], answer: 0 },
+      { question: "The half-life of a radioactive substance is 2 hours. How much time is required for the substance to decay to 12.5% of its initial value?", options: ["6 hours", "4 hours", "3 hours", "2 hours"], answer: 0 },
+      { question: "In a Young’s double slit experiment, the distance between the slits is 0.5 mm and the wavelength of light is 600 nm. What is the angular separation between the first order maxima?", options: ["0.2°", "1.2°", "2.2°", "4.8°"], answer: 2 },
+      { question: "An electric dipole with a dipole moment of 6 × 10⁻⁹ C·m is placed in a uniform electric field of 4 × 10⁴ N/C. What is the potential energy of the dipole?", options: ["-2.4 × 10⁻⁴ J", "2.4 × 10⁻⁴ J", "-1.2 × 10⁻⁴ J", "1.2 × 10⁻⁴ J"], answer: 0 },
+      { question: "The total energy of a particle in a 1-D box of length L is given by E = n²h²/8mL². If the length of the box is reduced by half, how does the energy change?", options: ["It becomes 4 times greater", "It becomes 2 times greater", "It becomes half", "It remains the same"], answer: 0 },
+      { question: "What is the magnetic field at the center of a circular loop of current, where the current is 2 A and the radius of the loop is 10 cm?", options: ["4π × 10⁻⁵ T", "2π × 10⁻⁵ T", "4π × 10⁻⁷ T", "2π × 10⁻⁷ T"], answer: 3 },
+      { question: "If the wavelength of a de Broglie wave is 1 nm, what is the momentum of the particle?", options: ["6.626 × 10⁻²⁴ kg·m/s", "6.626 × 10⁻²⁶ kg·m/s", "6.626 × 10⁻²⁸ kg·m/s", "6.626 × 10⁻³² kg·m/s"], answer: 1 },
+      { question: "The binding energy per nucleon for ¹⁸O is 7.5 MeV. How much energy is required to break a sample of 1 gram of oxygen into individual nuclei?", options: ["5.4 × 10²³ J", "6.4 × 10²³ J", "7.2 × 10²³ J", "8.0 × 10²³ J"], answer: 0 },
+    ];
+
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let correctAnswers = 0;
+    let incorrectAnswers = 0;
+    let timer;
+    const timerDisplay = document.getElementById("timer");
+    const nextBtn = document.getElementById("next-btn");
+    const questionContainer = document.getElementById("question-container");
+
+    function startQuiz() {
+      loadQuestion();
+      startTimer(60); // 60 seconds per question
+    }
+
+    function loadQuestion() {
+      const currentQuestion = questions[currentQuestionIndex];
+      questionContainer.innerHTML = `
+        <p class="question">${currentQuestion.question}</p>
+        <div class="options">
+          ${currentQuestion.options.map((option, index) => `
+            <button onclick="selectAnswer(${index})">${option}</button>
+          `).join('')}
+        </div>
+      `;
+      nextBtn.style.display = "none"; // Hide Next button initially
+    }
+
+    function selectAnswer(index) {
+      const currentQuestion = questions[currentQuestionIndex];
+      if (index === currentQuestion.answer) {
+        score++;
+        correctAnswers++;
+      } else {
+        incorrectAnswers++;
+      }
+
+      const buttons = document.querySelectorAll(".options button");
+      buttons.forEach((button, i) => {
+        button.disabled = true;
+        if (i === currentQuestion.answer) {
+          button.style.backgroundColor = "#4CAF50"; // green
+        } else if (i === index) {
+          button.style.backgroundColor = "#f44336"; // red
+        }
+      });
+
+      nextBtn.style.display = "inline-block";
+    }
+
+    function nextQuestion() {
+      currentQuestionIndex++;
+      if (currentQuestionIndex < questions.length) {
+        loadQuestion();
+      } else {
+        showScorePage();
+      }
+    }
+
+    function showScorePage() {
+      clearInterval(timer);
+      document.getElementById("quiz-container").style.display = "none";
+      document.getElementById("score-page").style.display = "block";
+      document.getElementById("final-score").textContent = score;
+      document.getElementById("correct-answers").textContent = correctAnswers;
+      document.getElementById("incorrect-answers").textContent = incorrectAnswers;
+      const percentage = Math.round((score / questions.length) * 100);
+      document.getElementById("percentage").textContent = percentage;
+
+      let answerList = '';
+      questions.forEach((question, index) => {
+        const correctAnswerText = question.options[question.answer];
+        answerList += `
+          <p class="${correctAnswers[index] === question.answer ? 'correct' : 'incorrect'}">
+            Question ${index + 1}: ${question.question} <br>
+            Correct Answer: ${correctAnswerText}
+          </p>
+        `;
+      });
+      document.getElementById("answer-list").innerHTML = answerList;
+    }
+
+    function startTimer(duration) {
+      let timeRemaining = duration;
+      timer = setInterval(() => {
+        timeRemaining--;
+        timerDisplay.textContent = `Time Left: ${timeRemaining}s`;
+
+        if (timeRemaining <= 0) {
+          clearInterval(timer);
+          showScorePage();
+        }
+      }, 1000);
+    }
+
+    function restartQuiz() {
+      currentQuestionIndex = 0;
+      score = 0;
+      correctAnswers = 0;
+      incorrectAnswers = 0;
+      document.getElementById("quiz-container").style.display = "block";
+      document.getElementById("score-page").style.display = "none";
+      startQuiz();
+    }
+
+    startQuiz();
+  </script>
+</body>
+</html>

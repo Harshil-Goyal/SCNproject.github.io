@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz Categories</title>
+  <style>
+    /* General Styling */
+    body {
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: url('https://images.unsplash.com/photo-1509223197845-458d87318791?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080') no-repeat center center/cover;
+      height: 100vh;
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+
+    /* Add a subtle overlay for better readability */
+    body::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.6); /* Dark overlay */
+      z-index: -1;
+    }
+
+    h1 {
+      margin-top: 0;
+      font-size: 2.5rem;
+      text-align: center;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
+    }
+
+    .category-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+      margin-top: 30px;
+    }
+
+    /* Category Card */
+    .category-card {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 15px;
+      width: 200px;
+      height: 200px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+      backdrop-filter: blur(5px);
+      transition: transform 0.4s, box-shadow 0.4s, background 0.4s;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .category-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 15px 25px rgba(0, 0, 0, 0.3);
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .category-card h2 {
+      font-size: 1.5rem;
+      margin: 0;
+      color: #fff;
+    }
+
+    .category-card p {
+      margin: 10px 0 0;
+      color: #ddd;
+      font-size: 0.9rem;
+      text-decoration: none;
+    }
+
+    /* Color Variations for Categories */
+    .category-card[data-category="chemistry"] {
+      border-color: #4caf50;
+    }
+
+    .category-card[data-category="physics"] {
+      border-color: #ff9800;
+    }
+
+    .category-card[data-category="english"] {
+      border-color: #03a9f4;
+    }
+
+    .category-card[data-category="maths"] {
+      border-color: #e91e63;
+    }
+
+    .abc {
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <h1>Select a Quiz Category</h1>
+  <div class="category-container">
+    <div class="category-card" data-category="chemistry">
+      <h2 class="abc">Chemistry</h2>
+      <p class="abc">Explore the wonders of Elements.</p>
+    </div>
+    <div class="category-card" data-category="physics">
+      <h2 class="abc">Physics</h2>
+      <p class="abc">Let's learn the laws of the world.</p>
+    </div>
+    <div class="category-card" data-category="english">
+      <h2 class="abc">English</h2>
+      <p class="abc">Dive into the world of language and literature.</p>
+    </div>
+    <div class="category-card" data-category="maths">
+      <h2 class="abc">Maths</h2>
+      <p class="abc">Let's solve it!</p>
+    </div>
+  </div>
+
+  <script>
+    // Event listener for category selection
+    document.querySelectorAll('.category-card').forEach(card => {
+      card.addEventListener('click', () => {
+        const category = card.dataset.category; // Get the selected category
+        
+        let redirectPage = ''; // Variable to hold the page URL
+
+        // Set the redirect URL based on the category
+        switch (category) {
+          case 'chemistry':
+            redirectPage = 'level10C.html'; // Replace with your actual page
+            break;
+          case 'physics':
+            redirectPage = 'level10P.html'; // Replace with your actual page
+            break;
+          case 'english':
+            redirectPage = 'level10E.html'; // Replace with your actual page
+            break;
+          case 'maths':
+            redirectPage = 'level10M.html'; // Replace with your actual page
+            break;
+          default:
+            redirectPage = 'defaultQuiz.html'; // Default fallback page if needed
+        }
+
+        // Redirect to the corresponding quiz page
+        window.location.href = redirectPage;
+      });
+    });
+  </script>
+</body>
+</html>

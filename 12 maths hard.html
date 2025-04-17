@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mathematics Quiz</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    /* General Styling */
+    body {
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #4facfe, #00f2fe);
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 3rem;
+      margin-top: 20px;
+      text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+    }
+
+    .quiz-container {
+      width: 90%;
+      max-width: 700px;
+      background: rgba(255, 255, 255, 0.2);
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+      backdrop-filter: blur(10px);
+      margin-top: 30px;
+    }
+
+    .question {
+      font-size: 1.5rem;
+      margin: 20px 0;
+      font-weight: 600;
+    }
+
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .options button {
+      background: #fff;
+      border: none;
+      padding: 12px 18px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 1.1rem;
+      font-weight: 500;
+      transition: background 0.3s, transform 0.3s, box-shadow 0.3s;
+    }
+
+    .options button:hover {
+      background: #8d7e84;
+      transform: scale(1.05);
+      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .timer {
+      font-size: 1.2rem;
+      margin: 10px 0;
+      text-align: center;
+      color: #ffdd57;
+    }
+
+    .next-btn {
+      padding: 12px 24px;
+      background: #ffdd57;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 1.1rem;
+      display: none;
+      text-align: center;
+      transition: background 0.3s, transform 0.3s;
+    }
+
+    .next-btn:hover {
+      background: #ffd700;
+      transform: scale(1.05);
+    }
+
+    /* Score Page */
+    .score-container {
+      text-align: center;
+      padding: 30px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 15px;
+      max-width: 800px;
+      margin-top: 20px;
+      backdrop-filter: blur(10px);
+    }
+
+    .score-details {
+      font-size: 1.2rem;
+      margin-top: 20px;
+    }
+
+    .answer-breakdown {
+      margin-top: 20px;
+      padding: 10px;
+      background-color: #1a1a1a;
+      border-radius: 10px;
+    }
+
+    .answer-breakdown p {
+      margin: 5px 0;
+    }
+
+    .correct {
+      color: #4CAF50;
+    }
+
+    .incorrect {
+      color: #f44336;
+    }
+
+    .score-container h2 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+    }
+
+    .score-details p {
+      font-weight: 500;
+    }
+  </style>
+</head>
+<body>
+  <h1>Mathematics Quiz</h1>
+  <div class="quiz-container" id="quiz-container">
+    <div id="question-container"></div>
+    <div class="timer" id="timer">Time Left: 60s</div>
+    <button class="next-btn" id="next-btn" onclick="nextQuestion()">Next</button>
+  </div>
+
+  <!-- Score Page -->
+  <div id="score-page" class="score-container" style="display:none;">
+    <h2>Quiz Completed!</h2>
+    <div class="score-details" id="score-details">
+      <p>Your Total Score: <span id="final-score"></span></p>
+      <p>Correct Answers: <span id="correct-answers"></span></p>
+      <p>Incorrect Answers: <span id="incorrect-answers"></span></p>
+      <p>Percentage: <span id="percentage"></span>%</p>
+    </div>
+    <div class="answer-breakdown" id="answer-breakdown">
+      <h3>Answer Breakdown</h3>
+      <div id="answer-list"></div>
+    </div>
+    <button class="next-btn" onclick="restartQuiz()">Home</button>
+  </div>
+
+  <script>
+    const questions = [
+      { question: "Find the value of \( \int_0^\pi \sin(x) \, dx \)", options: ["2", "0", "1", "π"], answer: 1 },
+      { question: "What is the solution to the equation \( 2x^2 - 3x + 5 = 0 \)?", options: ["Complex roots", "Real roots", "One real root", "No roots"], answer: 0 },
+      { question: "If \( A = \begin{bmatrix} 1 & 2 \\ 3 & 4 \end{bmatrix} \), find \( A^{-1} \).", options: ["\( \begin{bmatrix} -2 & 1 \\ 1.5 & -0.5 \end{bmatrix} \)", "None of the above", "Identity matrix", "Zero matrix"], answer: 0 },
+      { question: "Solve the differential equation \( \frac{dy}{dx} = x^2 + 3x \).", options: ["\( \frac{1}{3} x^3 + \frac{3}{2} x^2 + C \)", "x^3 + 3x^2 + C", "x^2 + 3x + C", "None of the above"], answer: 0 },
+      { question: "Find the value of \( \lim_{x \to 0} \frac{\sin x}{x} \)", options: ["1", "0", "∞", "Undefined"], answer: 0 },
+      { question: "What is the value of \( \lim_{x \to 0} \frac{e^x - 1}{x} \)?", options: ["1", "0", "∞", "Undefined"], answer: 0 },
+      { question: "The sum of the roots of the equation \( x^2 - 7x + 10 = 0 \) is:", options: ["-7", "10", "7", "5"], answer: 2 },
+      { question: "Find the value of \( \frac{d}{dx} \left( x^3 + 5x^2 - 2x + 7 \right) \)", options: ["\( 3x^2 + 10x - 2 \)", "\( 3x^2 + 5x - 2 \)", "\( x^2 + 5x - 2 \)", "\( 3x^2 + 5x \)"], answer: 0 },
+      { question: "Solve \( z^2 + 1 = 0 \), where \( z \) is a complex number.", options: ["\( i \)", "\( -i \)", "\( i \) or \( -i \)", "None of the above"], answer: 2 },
+      { question: "If \( \log_2 8 = x \), then \( x \) is:", options: ["3", "2", "1", "4"], answer: 0 }
+    ];
+
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let correctAnswers = 0;
+    let incorrectAnswers = 0;
+    let timer;
+
+    const questionContainer = document.getElementById("question-container");
+    const timerDisplay = document.getElementById("timer");
+    const nextBtn = document.getElementById("next-btn");
+
+    function startQuiz() {
+      loadQuestion();
+      startTimer(60);
+    }
+
+    function loadQuestion() {
+      const currentQuestion = questions[currentQuestionIndex];
+      questionContainer.innerHTML = ` 
+        <p class="question">${currentQuestion.question}</p>
+        <div class="options">
+          ${currentQuestion.options.map((option, index) => ` 
+            <button onclick="selectOption(${index})">${option}</button>
+          `).join('')}
+        </div>
+      `;
+      nextBtn.style.display = "none";
+    }
+
+    let selectedIndex = null;
+
+    function selectOption(index) {
+      const currentQuestion = questions[currentQuestionIndex];
+      selectedIndex = index;
+
+      if (index === currentQuestion.answer) {
+        score++;
+        correctAnswers++;
+      } else {
+        incorrectAnswers++;
+      }
+
+      // Disable buttons after selection
+      const buttons = document.querySelectorAll(".options button");
+      buttons.forEach((button, i) => {
+        button.disabled = true;
+        if (i === currentQuestion.answer) {
+          button.style.backgroundColor = "#4CAF50"; // green
+        } else if (i === selectedIndex) {
+          button.style.backgroundColor = "#f44336"; // red
+        }
+      });
+
+      nextBtn.style.display = "inline-block";
+    }
+
+    function nextQuestion() {
+      currentQuestionIndex++;
+      if (currentQuestionIndex < questions.length) {
+        loadQuestion();
+      } else {
+        showScorePage();
+      }
+    }
+
+    function showScorePage() {
+      document.getElementById("quiz-container").style.display = "none";
+      document.getElementById("score-page").style.display = "block";
+      document.getElementById("final-score").textContent = score;
+      document.getElementById("correct-answers").textContent = correctAnswers;
+      document.getElementById("incorrect-answers").textContent = incorrectAnswers;
+      const percentage = Math.round((score / questions.length) * 100);
+      document.getElementById("percentage").textContent = percentage;
+
+      let answerList = '';
+      questions.forEach((question, index) => {
+        const correctAnswerText = question.options[question.answer];
+        answerList += `
+          <p class="${question.answer === selectedIndex ? 'correct' : 'incorrect'}">
+            Question ${index + 1}: ${question.question} <br>
+            Correct Answer: ${correctAnswerText}
+          </p>
+        `;
+      });
+      document.getElementById("answer-list").innerHTML = answerList;
+    }
+
+    function startTimer(duration) {
+      let timeRemaining = duration;
+      timer = setInterval(() => {
+        timeRemaining--;
+        timerDisplay.textContent = `Time Left: ${timeRemaining}s`;
+
+        if (timeRemaining <= 0) {
+          clearInterval(timer);
+          showScorePage();
+        }
+      }, 1000);
+    }
+
+    function restartQuiz() {
+      currentQuestionIndex = 0;
+      score = 0;
+      correctAnswers = 0;
+      incorrectAnswers = 0;
+      document.getElementById("quiz-container").style.display = "block";
+      document.getElementById("score-page").style.display = "none";
+      startQuiz();
+    }
+
+    startQuiz();
+  </script>
+</body>
+</html>

@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Contact Us - Quiz Site</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background-color:white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 600px;
+            padding: 40px;
+            transform: translateY(-30px);
+            animation: slideUp 0.5s ease-out;
+            margin-top: 50px;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            color: black;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 1.1rem;
+            color:black;
+            margin-bottom: 30px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            font-size: 1rem;
+            color: rgb(27, 14, 14);
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .input-group input,
+        .input-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ccc;
+            border-radius: 4px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .input-group input:focus,
+        .input-group textarea:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        .error {
+            color: #e74c3c;
+            font-size: 0.9rem;
+            display: none;
+        }
+
+        .valid {
+            border-color: #2ecc71;
+        }
+
+        .invalid {
+            border-color: #e74c3c;
+        }
+
+        .submit-btn {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .submit-btn:hover {
+            background-color: #2980b9;
+        }
+
+        .confirmation {
+            display: none;
+            text-align: center;
+            margin-top: 30px;
+        }
+
+    
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Contact Us</h1>
+        <p>We'd love to hear from you!</p>
+    </header>
+
+    <form id="contact-form" class="contact-form">
+        <div class="input-group">
+            <label for="name">Full Name</label>
+            <input type="text" id="name" name="name" placeholder="Enter your full name" required>
+            <span class="error" id="name-error">Please enter your full name.</span>
+        </div>
+
+        <div class="input-group">
+            <label for="email">Email Address</label>
+            <input type="email" id="email" name="email" placeholder="Enter your email" required>
+            <span class="error" id="email-error">Please enter a valid email address.</span>
+        </div>
+
+        <div class="input-group">
+            <label for="subject">Subject</label>
+            <input type="text" id="subject" name="subject" placeholder="Enter the subject" required>
+            <span class="error" id="subject-error">Please enter a subject.</span>
+        </div>
+
+        <div class="input-group">
+            <label for="message">Message</label>
+            <textarea id="message" name="message" placeholder="Your message..." rows="4" required></textarea>
+            <span class="error" id="message-error">Please enter your message.</span>
+        </div>
+
+        <button type="submit" class="submit-btn">Send Message</button>
+    </form>
+
+    <div class="confirmation" id="confirmation-msg">
+        <h3>Thank you for your message!</h3>
+        <p>We'll get back to you as soon as possible.</p>
+    </div>
+</div>
+
+<script>
+    const form = document.getElementById('contact-form');
+    const nameInput = document.getElementById('name');
+    const emailInput = document.getElementById('email');
+    const subjectInput = document.getElementById('subject');
+    const messageInput = document.getElementById('message');
+    const confirmationMsg = document.getElementById('confirmation-msg');
+
+    // Real-time validation
+    nameInput.addEventListener('input', validateName);
+    emailInput.addEventListener('input', validateEmail);
+    subjectInput.addEventListener('input', validateSubject);
+    messageInput.addEventListener('input', validateMessage);
+
+    form.addEventListener('submit', function(event) {
+        event.preventDefault();
+        if (isFormValid()) {
+            form.style.display = 'none';
+            confirmationMsg.style.display = 'block';
+        }
+    });
+
+    // Validation functions
+    function validateName() {
+        const name = nameInput.value.trim();
+        const nameError = document.getElementById('name-error');
+        if (name === '') {
+            showError(nameInput, nameError);
+        } else {
+            showValid(nameInput, nameError);
+        }
+    }
+
+    function validateEmail() {
+        const email = emailInput.value.trim();
+        const emailError = document.getElementById('email-error');
+        const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        if (email === '' || !emailPattern.test(email)) {
+            showError(emailInput, emailError);
+        } else {
+            showValid(emailInput, emailError);
+        }
+    }
+
+    function validateSubject() {
+        const subject = subjectInput.value.trim();
+        const subjectError = document.getElementById('subject-error');
+        if (subject === '') {
+            showError(subjectInput, subjectError);
+        } else {
+            showValid(subjectInput, subjectError);
+        }
+    }
+
+    function validateMessage() {
+        const message = messageInput.value.trim();
+        const messageError = document.getElementById('message-error');
+        if (message === '') {
+            showError(messageInput, messageError);
+        } else {
+            showValid(messageInput, messageError);
+        }
+    }
+
+    // Helper functions
+    function showError(input, errorElement) {
+        errorElement.style.display = 'block';
+        input.classList.add('invalid');
+        input.classList.remove('valid');
+    }
+
+    function showValid(input, errorElement) {
+        errorElement.style.display = 'none';
+        input.classList.add('valid');
+        input.classList.remove('invalid');
+    }
+
+    function isFormValid() {
+        const inputs = [nameInput, emailInput, subjectInput, messageInput];
+        return inputs.every(input => input.classList.contains('valid'));
+    }
+</script>
+
+</body>
+</html>

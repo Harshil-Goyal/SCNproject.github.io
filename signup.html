@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Advanced Form Validation</title>
+  <style>
+    /* General Styles */
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f7fc;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .form-container {
+      background-color: #ffffff;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 400px;
+      box-sizing: border-box;
+    }
+
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+
+    /* Form Styles */
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+      color: #333;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 1rem;
+      box-sizing: border-box;
+      transition: border-color 0.3s ease;
+    }
+
+    input:focus {
+      border-color: #0066cc;
+      outline: none;
+    }
+
+    .valid {
+      border-color: green;
+    }
+
+    .invalid {
+      border-color: red;
+    }
+
+    .error {
+      color: red;
+      font-size: 0.9em;
+      margin-top: 5px;
+    }
+
+    .success {
+      color: green;
+      font-size: 0.9em;
+    }
+
+    .password-strength {
+      font-size: 0.9em;
+    }
+
+    .strength-weak {
+      color: red;
+    }
+
+    .strength-medium {
+      color: orange;
+    }
+
+    .strength-strong {
+      color: green;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      background-color: #0066cc;
+      color: white;
+      font-size: 1rem;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #004d99;
+    }
+
+    p {
+      text-align: center;
+    }
+
+    a {
+      color: #0066cc;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="form-container">
+    <h1>Registration Form</h1>
+    <form id="advancedForm">
+      <div class="form-group">
+        <label for="username">Username:</label>
+        <input type="text" name="username" id="username">
+        <span id="usernameError" class="error"></span>
+      </div>
+      <div class="form-group">
+        <label for="email">Email:</label>
+        <input type="email" name="email" id="email">
+        <span id="emailError" class="error"></span>
+      </div>
+      <div class="form-group">
+        <label for="password">Password:</label>
+        <input type="password" name="password" id="password">
+        <span id="passwordError" class="error"></span>
+      </div>
+      <div class="form-group">
+        <label for="confirmPassword">Confirm Password:</label>
+        <input type="password" name="confirmPassword" id="confirmPassword">
+        <span id="confirmPasswordError" class="error"></span>
+      </div>
+      <button type="submit">Register</button>
+    </form>
+    <br>
+    <p>Already have an account? <a href="login.html">Login here</a></p>
+  </div>
+
+  <script>
+    const username = document.getElementById('username');
+    const usernameError = document.getElementById('usernameError');
+    const email = document.getElementById('email');
+    const emailError = document.getElementById('emailError');
+    const password = document.getElementById('password');
+    const passwordError = document.getElementById('passwordError');
+    const confirmPassword = document.getElementById('confirmPassword');
+    const confirmPasswordError = document.getElementById('confirmPasswordError');
+    const form = document.getElementById('advancedForm');
+
+    username.addEventListener('input', () => validateUsername());
+    email.addEventListener('input', () => validateEmail());
+    password.addEventListener('input', () => validatePassword());
+    confirmPassword.addEventListener('input', () => validateConfirmPassword());
+
+    form.addEventListener('submit', function(event) {
+      event.preventDefault();
+
+      const isFormValid = [validateUsername(), validateEmail(), validatePassword(), validateConfirmPassword()].every(Boolean);
+
+      if (isFormValid) {
+        alert("Form Submitted successfully");
+        window.location.href="home.html"
+      }
+    });
+
+    function validateUsername() {
+      const value = username.value.trim();
+      const regex = /^[a-zA-Z0-9]{8,}$/;
+
+      if (!value) {
+        setError(username, usernameError, "Username is required!");
+        return false;
+      } else if (!regex.test(value)) {
+        setError(username, usernameError, "Username must be 3 characters long and alphanumeric");
+        return false;
+      } else {
+        setSuccess(username, usernameError);
+        return true;
+      }
+    }
+
+    function validateEmail() {
+      const value = email.value.trim();
+      const regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+
+      if (!value) {
+        setError(email, emailError, "Email is required!");
+        return false;
+      } else if (!regex.test(value)) {
+        setError(email, emailError, "Please enter a valid email address");
+        return false;
+      } else {
+        setSuccess(email, emailError);
+        return true;
+      }
+    }
+
+    function validatePassword() {
+      const value = password.value.trim();
+      const regex = /^[A-Za-z0-9]{8,}$/; // Minimum 8 characters with letters and numbers
+
+      if (!value) {
+        setError(password, passwordError, "Password is required");
+        return false;
+      } else if (!regex.test(value)) {
+        setError(password, passwordError, "Password must be at least 8 characters long");
+        return false;
+      } else {
+        setSuccess(password, passwordError);
+        return true;
+      }
+    }
+
+    function validateConfirmPassword() {
+      const passwordValue = password.value.trim();
+      const confirmPasswordValue = confirmPassword.value.trim();
+
+      if (!confirmPasswordValue) {
+        setError(confirmPassword, confirmPasswordError, "Confirm Password is required");
+        return false;
+      } else if (confirmPasswordValue !== passwordValue) {
+        setError(confirmPassword, confirmPasswordError, "Passwords do not match");
+        return false;
+      } else {
+        setSuccess(confirmPassword, confirmPasswordError);
+        return true;
+      }
+    }
+
+    function setError(input, errorElement, message) {
+      input.classList.add('invalid');
+      input.classList.remove('valid');
+      errorElement.textContent = message;
+    }
+
+    function setSuccess(input, errorElement) {
+      input.classList.add('valid');
+      input.classList.remove('invalid');
+      errorElement.textContent = '';
+    }
+  </script>
+</body>
+</html>

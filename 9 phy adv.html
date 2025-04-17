@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Advanced Physics Quiz</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    /* General Styling */
+    body {
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #4facfe, #00f2fe);
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 3rem;
+      margin-top: 20px;
+      text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+    }
+
+    .quiz-container {
+      width: 90%;
+      max-width: 700px;
+      background: rgba(255, 255, 255, 0.2);
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+      backdrop-filter: blur(10px);
+      margin-top: 30px;
+    }
+
+    .question {
+      font-size: 1.5rem;
+      margin: 20px 0;
+      font-weight: 600;
+    }
+
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .options button {
+      background: #fff;
+      border: none;
+      padding: 12px 18px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 1.1rem;
+      font-weight: 500;
+      transition: background 0.3s, transform 0.3s, box-shadow 0.3s;
+    }
+
+    .options button:hover {
+      background: #8d7e84;
+      transform: scale(1.05);
+      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .timer {
+      font-size: 1.2rem;
+      margin: 10px 0;
+      text-align: center;
+      color: #111110;
+    }
+
+    .next-btn {
+      padding: 12px 24px;
+      background: #ffdd57;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 1.1rem;
+      display: none;
+      text-align: center;
+      transition: background 0.3s, transform 0.3s;
+    }
+
+    .next-btn:hover {
+      background: #ffd700;
+      transform: scale(1.05);
+    }
+
+    /* Score Page */
+    .score-container {
+      text-align: center;
+      padding: 30px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 15px;
+      max-width: 800px;
+      margin-top: 20px;
+      backdrop-filter: blur(10px);
+    }
+
+    .score-details {
+      font-size: 1.2rem;
+      margin-top: 20px;
+    }
+
+    .answer-breakdown {
+      margin-top: 20px;
+      padding: 10px;
+      background-color: #1a1a1a;
+      border-radius: 10px;
+    }
+
+    .answer-breakdown p {
+      margin: 5px 0;
+    }
+
+    .correct {
+      color: #4CAF50;
+    }
+
+    .incorrect {
+      color: #f44336;
+    }
+
+    .score-container h2 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+    }
+
+    .score-details p {
+      font-weight: 500;
+    }
+  </style>
+</head>
+<body>
+  <h1>Advanced Physics Quiz</h1>
+  <div class="quiz-container" id="quiz-container">
+    <div id="question-container"></div>
+    <div class="timer" id="timer">Time Left: 60s</div>
+    <button class="next-btn" id="next-btn" onclick="nextQuestion()">Next</button>
+  </div>
+
+  <!-- Score Page -->
+  <div id="score-page" class="score-container" style="display:none;">
+    <h2>Quiz Completed!</h2>
+    <div class="score-details" id="score-details">
+      <p>Your Total Score: <span id="final-score"></span></p>
+      <p>Correct Answers: <span id="correct-answers"></span></p>
+      <p>Incorrect Answers: <span id="incorrect-answers"></span></p>
+      <p>Percentage: <span id="percentage"></span>%</p>
+    </div>
+    <div class="answer-breakdown" id="answer-breakdown">
+      <h3>Answer Breakdown</h3>
+      <div id="answer-list"></div>
+    </div>
+    <button class="next-btn" onclick="restartQuiz()">Home</button>
+  </div>
+
+  <script>
+    const questions = [
+      { question: "What is the formula for calculating the work done when a force is applied to an object moving in the direction of the force?", options: ["Work = Force × Distance", "Work = Force / Distance", "Work = Distance / Force", "Work = Force + Distance"], answer: 0 },
+      { question: "Which of the following is true for a body in uniform circular motion?", options: ["The velocity is constant but direction changes", "The speed is constant but direction changes", "Both speed and velocity are constant", "The velocity changes but speed is constant"], answer: 1 },
+      { question: "The escape velocity is the speed required to escape the gravitational field of a planet. What is the formula for escape velocity?", options: ["v = √(2GM/r)", "v = √(GM/r)", "v = √(gM/r)", "v = √(GM²/r²)"], answer: 0 },
+      { question: "What is the relationship between pressure and volume of a gas at constant temperature according to Boyle’s Law?", options: ["Pressure is directly proportional to volume", "Pressure is inversely proportional to volume", "Pressure is independent of volume", "Pressure is equal to volume"], answer: 1 },
+      { question: "What is the principle behind the working of a hydraulic lift?", options: ["Pascal’s Law", "Archimedes’ Principle", "Newton’s Third Law", "Bernoulli's Principle"], answer: 0 },
+      { question: "In a uniform magnetic field, a moving charged particle experiences a force perpendicular to both its velocity and the magnetic field. This is described by:", options: ["Coulomb’s Law", "Right-Hand Rule", "Lorentz Force", "Faraday’s Law"], answer: 2 },
+      { question: "What is the formula for the potential energy stored in a spring?", options: ["PE = 1/2 kx²", "PE = kx", "PE = 1/2 kx", "PE = kx²"], answer: 0 },
+      { question: "In the equation of motion, v² = u² + 2as, the variable 's' represents:", options: ["Speed", "Distance", "Acceleration", "Time"], answer: 1 },
+      { question: "Which of the following is an example of a non-conservative force?", options: ["Gravitational force", "Elastic force", "Frictional force", "Magnetic force"], answer: 2 },
+      { question: "In an electric circuit, the total resistance of resistors connected in parallel is:", options: ["Greater than the resistance of the smallest resistor", "Equal to the resistance of the smallest resistor", "Less than the resistance of the smallest resistor", "Equal to the sum of all resistances"], answer: 2 }
+    ];
+
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let correctAnswers = 0;
+    let incorrectAnswers = 0;
+    let timer;
+    let userResponses = []; // Store user responses
+
+    const questionContainer = document.getElementById("question-container");
+    const timerDisplay = document.getElementById("timer");
+    const nextBtn = document.getElementById("next-btn");
+
+    function startQuiz() {
+      loadQuestion();
+      startTimer(60);
+    }
+
+    function loadQuestion() {
+      const currentQuestion = questions[currentQuestionIndex];
+      questionContainer.innerHTML = ` 
+        <p class="question">${currentQuestion.question}</p>
+        <div class="options">
+          ${currentQuestion.options.map((option, index) => ` 
+            <button onclick="selectOption(${index})">${option}</button>
+          `).join("")}
+        </div>
+      `;
+      nextBtn.style.display = "none";
+    }
+
+    function selectOption(selectedIndex) {
+      const correctAnswer = questions[currentQuestionIndex].answer;
+      userResponses[currentQuestionIndex] = selectedIndex;
+
+      if (selectedIndex === correctAnswer) {
+        score++;
+        correctAnswers++;
+      } else {
+        incorrectAnswers++;
+      }
+
+      document.querySelectorAll(".options button").forEach((button, index) => {
+        button.disabled = true;
+        if (index === correctAnswer) {
+          button.style.backgroundColor = "#4CAF50";
+        } else if (index === selectedIndex) {
+          button.style.backgroundColor = "#f44336";
+        }
+      });
+
+      nextBtn.style.display = "inline-block";
+    }
+
+    function nextQuestion() {
+      currentQuestionIndex++;
+      if (currentQuestionIndex < questions.length) {
+        loadQuestion();
+      } else {
+        showScore();
+      }
+    }
+
+    function startTimer(seconds) {
+      let remainingTime = seconds;
+      timer = setInterval(() => {
+        if (remainingTime <= 0) {
+          clearInterval(timer);
+          showScore();
+        } else {
+          timerDisplay.textContent = `Time Left: ${remainingTime}s`;
+          remainingTime--;
+        }
+      }, 1000);
+    }
+
+    function showScore() {
+      clearInterval(timer);
+      document.getElementById('quiz-container').style.display = 'none';
+      document.getElementById('score-page').style.display = 'block';
+
+      const percentage = ((score / questions.length) * 100).toFixed(2);
+
+      document.getElementById("final-score").textContent = `${score}/${questions.length}`;
+      document.getElementById("correct-answers").textContent = correctAnswers;
+      document.getElementById("incorrect-answers").textContent = incorrectAnswers;
+      document.getElementById("percentage").textContent = percentage;
+
+      const answerList = document.getElementById("answer-list");
+      answerList.innerHTML = ""; // Clear previous content
+
+      questions.forEach((question, index) => {
+        const isCorrect = userResponses[index] === question.answer;
+        const resultClass = isCorrect ? 'correct' : 'incorrect';
+        const userAnswerText = userResponses[index] !== undefined
+          ? question.options[userResponses[index]]
+          : "No Answer";
+        const correctAnswerText = question.options[question.answer];
+
+        answerList.innerHTML += `
+          <p class="${resultClass}">
+            <strong>Q${index + 1}:</strong> ${question.question}<br>
+            Your Answer: ${userAnswerText} <br>
+            Correct Answer: ${correctAnswerText} <br>
+            Result: <strong>${isCorrect ? "Correct" : "Incorrect"}</strong>
+          </p>
+        `;
+      });
+    }
+
+    function restartQuiz() {
+      window.location.reload();
+    }
+
+    startQuiz();
+  </script>
+</body>
+</html>
